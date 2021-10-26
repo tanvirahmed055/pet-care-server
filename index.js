@@ -21,6 +21,7 @@ async function run() {
         await client.connect();
         const database = client.db("pet_care_database");
         const servicesCollection = database.collection("services");
+        const storeCollection = database.collection("store_data");
 
 
         //GET API for services
@@ -36,6 +37,22 @@ async function run() {
             const services = await cursor.toArray();
             res.json(services);
         })
+
+
+        //GET API for store data
+        app.get('/storeData', async (req, res) => {
+            const query = {};
+
+            const cursor = storeCollection.find(query);
+            // print a message if no documents were found
+            if ((await cursor.count()) === 0) {
+                console.log("No documents found!");
+            }
+            // replace console.dir with your callback to access individual elements
+            const storeData = await cursor.toArray();
+            res.json(storeData);
+        })
+
 
     } finally {
         //await client.close();
