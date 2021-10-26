@@ -117,19 +117,22 @@ async function run() {
             const filter = { _id: ObjectId(serviceId) };
 
             const options = { upsert: true };
-            // create a document that sets the plot of the movie
+            // create a document that sets the properties of the services
             const updateDoc = {
                 $set: {
                     name: `${service.name}`,
                     img: `${service.img}`,
                     shortDescription: `${service.shortDescription}`,
                     detailDescription: `${service.detailDescription}`,
+                    price: `${service.price}`
                 },
             };
             const result = await servicesCollection.updateOne(filter, updateDoc, options);
             console.log(
                 `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,
             );
+
+            res.json(result);
         })
 
 
