@@ -2,6 +2,9 @@ const express = require('express')
 const { MongoClient } = require('mongodb');
 const cors = require('cors')
 require('dotenv').config();
+const ObjectId = require('mongodb').ObjectId;
+
+
 const app = express()
 const port = 5000
 
@@ -51,6 +54,20 @@ async function run() {
             // replace console.dir with your callback to access individual elements
             const storeData = await cursor.toArray();
             res.json(storeData);
+        })
+
+        app.delete('/deleteService/:id', async (req, res) => {
+
+            const serviceId = req.params.id;
+            console.log(serviceId);
+            const query = { _id: ObjectId(serviceId) };
+            const result = await servicesCollection.deleteOne(query);
+            if (result.deletedCount === 1) {
+                console.log("Successfully deleted one document.");
+            } else {
+                console.log("No documents matched the query. Deleted 0 documents.");
+            }
+            res.json(result);
         })
 
 
