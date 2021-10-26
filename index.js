@@ -42,6 +42,23 @@ async function run() {
         })
 
 
+        //GET API for single service
+        app.get('/singleService/:id', async (req, res) => {
+
+            const serviceId = req.params.id;
+            console.log(serviceId);
+            const query = { _id: ObjectId(serviceId) };
+
+
+            const service = await servicesCollection.findOne(query);
+
+            console.log(service);
+
+            res.json(service);
+
+        })
+
+
         //GET API for store data
         app.get('/storeData', async (req, res) => {
             const query = {};
@@ -56,6 +73,7 @@ async function run() {
             res.json(storeData);
         })
 
+        //DELETE API for services        
         app.delete('/deleteService/:id', async (req, res) => {
 
             const serviceId = req.params.id;
@@ -68,6 +86,50 @@ async function run() {
                 console.log("No documents matched the query. Deleted 0 documents.");
             }
             res.json(result);
+        })
+
+        //POST API for updating services        
+        app.post('/addService', async (req, res) => {
+            const service = req.body;
+            console.log(service);
+
+            // create a document to insert
+            const doc = {
+                name: `${service.name}`,
+                img: `${service.img}`,
+                shortDescription: `${service.shortDescription}`,
+                detailDescription: `${service.detailDescription}`,
+                price: `${service.price}`,
+            }
+            const result = await servicesCollection.insertOne(doc);
+            console.log(`A document was inserted with the _id: ${result.insertedId}`);
+            res.json(result);
+        })
+
+
+        //PUT API for updating services        
+        app.put('/updateService/:id', async (req, res) => {
+
+            const serviceId = req.params.id;
+            const service = req.body;
+            console.log(serviceId);
+            // create a filter for a service to update
+            const filter = { _id: ObjectId(serviceId) };
+
+            const options = { upsert: true };
+            // create a document that sets the plot of the movie
+            const updateDoc = {
+                $set: {
+                    name: `${service.name}`,
+                    img: `${service.img}`,
+                    shortDescription: `${service.shortDescription}`,
+                    detailDescription: `${service.detailDescription}`,
+                },
+            };
+            const result = await servicesCollection.updateOne(filter, updateDoc, options);
+            console.log(
+                `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,
+            );
         })
 
 
